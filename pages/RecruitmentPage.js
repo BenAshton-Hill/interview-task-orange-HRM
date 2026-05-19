@@ -16,6 +16,16 @@ class RecruitmentPage {
         this.saveButton = page.locator('button:has-text("Save")');
 
         this.successToast = page.locator('.oxd-toast');
+
+        // Search fields
+        this.candidateSearchInput = page.locator(
+            '(//input[@placeholder="Type for hints..."])[1]'
+        );
+
+        this.searchButton = page.locator('button:has-text("Search")');
+
+        // Results table
+        this.resultsTable = page.locator('.oxd-table-body');
     }
 
     async navigateToRecruitment() {
@@ -37,6 +47,18 @@ class RecruitmentPage {
         await this.page.locator('.oxd-select-dropdown > *').first().click();
 
         await this.saveButton.click();
+    }
+    async searchCandidate(candidateName) {
+        await this.candidateSearchInput.fill(candidateName);
+        await this.searchButton.click();
+    }
+
+    async candidateExists(candidateName) {
+        await this.resultsTable.waitFor();
+
+        return await this.resultsTable
+            .locator(`text=${candidateName}`)
+            .isVisible();
     }
 }
 
