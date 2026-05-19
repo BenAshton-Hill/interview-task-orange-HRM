@@ -26,6 +26,16 @@ class RecruitmentPage {
 
         // Results table
         this.resultsTable = page.locator('.oxd-table-body');
+
+        // Delete candidate button
+        this.deleteButton = page.locator(
+            'button i.bi-trash'
+        );
+
+        // Confirmation modal delete button
+        this.confirmDeleteButton = page.locator(
+            'button:has-text("Yes, Delete")'
+        );
     }
 
     async navigateToRecruitment() {
@@ -56,9 +66,18 @@ class RecruitmentPage {
     async candidateExists(candidateName) {
         await this.resultsTable.waitFor();
 
-        return await this.resultsTable
-            .locator(`text=${candidateName}`)
-            .isVisible();
+        const candidate = this.resultsTable.locator(
+            `text=${candidateName}`
+        );
+
+        return await candidate.count() > 0;
+    }
+    async deleteCandidate() {
+        await this.deleteButton.first().click();
+    }
+
+    async confirmDelete() {
+        await this.confirmDeleteButton.click();
     }
 }
 
