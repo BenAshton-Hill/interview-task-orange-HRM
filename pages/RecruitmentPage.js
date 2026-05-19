@@ -4,20 +4,22 @@ class RecruitmentPage {
 
         this.recruitmentMenu = page.locator('//span[text()="Recruitment"]');
 
-        this.addButton = page.locator('button:has-text("Add")');
+        this.addButton = page.getByRole('button', {
+            name: 'Add'
+        }).first();
 
         this.firstNameInput = page.locator('input[name="firstName"]');
+
         this.lastNameInput = page.locator('input[name="lastName"]');
 
-        this.vacancyDropdown = page.locator('.oxd-select-text');
-
-        this.emailInput = page.locator('(//input[@placeholder="Type here..."])[1]');
+        this.emailInput = page.locator(
+            '//label[text()="Email"]/ancestor::div[contains(@class,"oxd-input-group")]//input'
+        );
 
         this.saveButton = page.locator('button:has-text("Save")');
 
-        this.successToast = page.locator('.oxd-toast');
+        this.successToast = page.locator('.oxd-toast-content');
 
-        // Search fields
         this.candidateSearchInput = page.locator(
             '(//input[@placeholder="Type for hints..."])[1]'
         );
@@ -39,10 +41,25 @@ class RecruitmentPage {
     }
 
     async navigateToRecruitment() {
+
         await this.recruitmentMenu.click();
+
+        // Wait for URL to contain recruitment
+        await this.page.waitForURL(/recruitment/);
     }
 
     async clickAddCandidate() {
+
+        // Ensure we are on Recruitment page
+        await this.page.waitForURL(/recruitment/);
+
+        // Small stabilisation wait for UI rendering
+        await this.page.waitForTimeout(1000);
+
+        await this.addButton.waitFor({
+            state: 'visible'
+        });
+
         await this.addButton.click();
     }
 
@@ -52,15 +69,20 @@ class RecruitmentPage {
 
         await this.emailInput.fill(email);
 
-        await this.vacancyDropdown.click();
-
-        await this.page.locator('.oxd-select-dropdown > *').first().click();
-
         await this.saveButton.click();
     }
     async searchCandidate(candidateName) {
+
+        await this.candidateSearchInput.click();
+
+        await this.candidateSearchInput.fill('');
+
         await this.candidateSearchInput.fill(candidateName);
+
         await this.searchButton.click();
+
+        // Wait for results table refresh
+        await this.resultsTable.waitFor();
     }
 
     async candidateExists(candidateName) {
