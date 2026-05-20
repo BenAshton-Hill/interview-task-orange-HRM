@@ -102,6 +102,7 @@ Given additional time, the following improvements could be implemented:
 - Test tagging and filtering
 - Data-driven testing
 - Allure reporting integration
+- Dockerized setup for local testing
 
 ## Trade-offs
 
